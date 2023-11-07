@@ -31,7 +31,7 @@ export default {
             <input type="password" id="password" v-model="password" required>
           </div>
           <button type="submit" class="btn btn-primary">Login</button>
-          <div class="register-link">
+                  <div class="register-link">
           <p>Not registered yet? <a href="#">Register here</a></p>
         </div>
         </form>
