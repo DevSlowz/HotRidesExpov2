@@ -9,7 +9,9 @@
 import Navigation from "./components/Navigation.vue";
 import { ref } from "vue";
 import { supabase } from "./lib/supabaseClient";
+
 import store from "./stores/index";
+
 export default {
   components: {
     Navigation,
@@ -19,17 +21,15 @@ export default {
     const appReady = ref(null);
 
     // Check to see if user is already logged in
-    const user = supabase.auth.onAuthStateChange;
+    const user = supabase.auth.getUser();
+    console.log('User : ' + user);
 
-    // If user does not exist, need to make app ready
-    if (!user) {
-      appReady.value = true;
-    }
-
-    // Runs when there is a auth state change
+    // Runs when there is an auth state change
     // if user is logged in, this will fire
     supabase.auth.onAuthStateChange((_, session) => {
-      console.log("Logged In")
+      if (session && session.user) {
+        console.log(session);
+      }
       store.methods.setUser(session);
       appReady.value = true;
     });
