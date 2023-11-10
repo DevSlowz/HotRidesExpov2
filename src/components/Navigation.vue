@@ -6,9 +6,6 @@
         </div>
         <ul class="flex flex-1 justify-end gap-x-10">
           <router-link class="cursor-pointer" :to="{ name: 'Home' }">Home</router-link>
-          <router-link v-if="user" class="cursor-pointer" :to="{ name: 'Login' }"
-            >Login</router-link
-          >
           <router-link v-if="!user" class="cursor-pointer" :to="{ name: 'Login' }"
             >Login</router-link
           >
@@ -27,6 +24,8 @@ export default {
   setup() {
     // Get user from store
     const user = computed(() => store.state.user);
+    console.log("User From Store : " + user.value)
+
 
     // Setup ref to router
     const router = useRouter();

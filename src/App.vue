@@ -22,13 +22,12 @@ export default {
 
     // Check to see if user is already logged in
     const user = supabase.auth.getUser();
-    console.log('User : ' + user);
 
     // Runs when there is an auth state change
     // if user is logged in, this will fire
     supabase.auth.onAuthStateChange((_, session) => {
-      if (session && session.user) {
-        console.log(session);
+      if (!user) {
+        console.log("Logged In");
       }
       store.methods.setUser(session);
       appReady.value = true;
