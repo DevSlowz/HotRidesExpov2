@@ -52,12 +52,37 @@
 </template>
 
 <script>
-export default {
-  name: 'Login',
-  // Your component definition here
-}
-</script>
+import { ref } from "vue";
+import { supabase } from "../lib/supabaseClient";
+import { useRouter } from "vue-router";
 
-<style>
-/* Your component's styles here */
-</style>
+export default {
+  name: "login",
+  setup() {
+    // Create data / vars
+    const router = useRouter();
+    const email = ref(null);
+    const password = ref(null);
+    const errorMsg = ref(null);
+
+    // Login function
+    const login = async () => {
+      try {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.value,
+          password: password.value,
+        });
+        if (error) throw error;
+        router.push({ name: "Home" });
+      } catch (error) {
+        errorMsg.value = `Error: ${error.message}`;
+        setTimeout(() => {
+          errorMsg.value = null;
+        }, 5000);
+      }
+    };
+
+    return { email, password, errorMsg, login };
+  },
+};
+</script>

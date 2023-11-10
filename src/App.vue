@@ -1,20 +1,39 @@
 <template>
-  <div class="min-h-full font-Poppins box-border">
-    <Navigation/>
-    <router-view/>
+  <div v-if="appReady" class="min-h-full font-Poppins box-border">
+    <Navigation />
+    <router-view />
   </div>
 </template>
 
 <script>
-import Navigation from './components/Navigation.vue'
+import Navigation from "./components/Navigation.vue";
+import { ref } from "vue";
+import { supabase } from "./lib/supabaseClient";
+import store from "./stores/index";
 export default {
   components: {
     Navigation,
   },
+  setup() {
+    // Create data / vars
+    const appReady = ref(null);
 
-}
+    // Check to see if user is already logged in
+    const user = supabase.auth.onAuthStateChange;
+
+    // If user does not exist, need to make app ready
+    if (!user) {
+      appReady.value = true;
+    }
+
+    // Runs when there is a auth state change
+    // if user is logged in, this will fire
+    supabase.auth.onAuthStateChange((_, session) => {
+      store.methods.setUser(session);
+      appReady.value = true;
+    });
+
+    return { appReady };
+  },
+};
 </script>
-
-<style>
-/* Add your own styles here */
-</style>
