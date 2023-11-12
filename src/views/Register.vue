@@ -46,6 +46,14 @@
           v-model="confirmPassword"
         />
       </div>
+      <div class="flex flex-col mb-2">
+        <label for="userType" class="mb-1 text-sm text-at-light-green">Select User Type:</label>
+        <select id="userType" required v-model="userType" class="p-2 border rounded-lg">
+          <option value="Participant">Participant</option>
+          <option value="Host">Host</option>
+          <option value="Sponsor">Sponsor</option>
+        </select>
+      </div>
 
       <button
         type="submit"
@@ -78,6 +86,7 @@ export default {
     const password = ref(null);
     const confirmPassword = ref(null);
     const errorMsg = ref(null);
+    const userType = ref(null);
 
     // Register function
     const register = async () => {
@@ -103,7 +112,7 @@ export default {
       }, 5000);
     };
 
-    return { email, password, confirmPassword, errorMsg, register };
+    return { email, password, confirmPassword, userType,errorMsg, register };
   },
 };
 </script>
