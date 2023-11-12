@@ -41,7 +41,7 @@
   
       // Logout function
       const eventDetails = () => {
-        router.push({ name: "Home" });
+        router.push({ name: "eventRegistration" });
       };
   
       return { eventDetails, user };
