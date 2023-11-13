@@ -1,8 +1,9 @@
 <template>
     <div class="flex justify-center items-center h-screen">
       <div class="bg-white rounded-lg shadow-lg p-8 w-96">
+        <img class="logo" src="/src/assets/images/logo.svg" alt="Logo" />
         <h1 class="text-2xl font-bold mb-4 text-center">Event Registration</h1>
-        <form @submit="submitRegistration">
+        <form>
           <div class="space-y-4">
             <div class="flex justify-center">
               <input v-model="firstName" type="text" placeholder="First Name" class="w-64 bg-gray-100 p-2 rounded" required>
@@ -34,7 +35,7 @@
                 <label for="event-date">Event Date:</label>
             </div>
             <div class="flex justify-center">
-              <Datepicker class="" v-model="date"> {{ date }}</Datepicker>
+              <Datepicker class="" v-model="date"> {{ date.slots }}</Datepicker>
             </div>
             <div class="flex justify-center">
                 <label for="event-dropdown">Available Events:</label>
@@ -49,7 +50,7 @@
             </div>
             <div class="flex justify-center">
               <button type="submit" class="w-64 bg-red-500 hover-bg-red-800 text-white font-bold py-4 px-6 rounded">
-                Register
+                Pay
               </button>
             </div>
           </div>
@@ -57,6 +58,8 @@
       </div>
     </div>
   </template>
+
+  <!-- TODO: When a date is selected call database to view events and use v-for to loop through them and populate event section-->
   
   <script setup>
   import { ref } from 'vue';

@@ -9,7 +9,7 @@
             </button>
           </div>
           <div class="flex justify-center"> <!-- Center the button -->
-            <button class="w-64 bg-red-500 hover:bg-red-800 text-white font-bold py-4 px-6 rounded"> <!-- Set a fixed width for all buttons -->
+            <button @click="registeredEvents" class="w-64 bg-red-500 hover:bg-red-800 text-white font-bold py-4 px-6 rounded"> <!-- Set a fixed width for all buttons -->
                 View Registered Events
             </button>
           </div>
@@ -38,13 +38,16 @@
   
       // Setup ref to router
       const router = useRouter();
-  
+      
       // Logout function
       const eventDetails = () => {
         router.push({ name: "eventRegistration" });
       };
-  
-      return { eventDetails, user };
+      // registeredEvents
+      const registeredEvents = () => {
+        router.push({ name: "registeredEvents" });
+      };
+      return { eventDetails,registeredEvents, user };
     },
   };
   </script>

@@ -14,7 +14,7 @@
             </button>
           </div>
           <div class="flex justify-center"> <!-- Center the button -->
-            <button class="w-64 bg-red-500 hover:bg-red-800 text-white font-bold py-4 px-6 rounded"> <!-- Set a fixed width for all buttons -->
+            <button @click="vehicleList" class="w-64 bg-red-500 hover:bg-red-800 text-white font-bold py-4 px-6 rounded"> <!-- Set a fixed width for all buttons -->
               View Rides
             </button>
           </div>
@@ -46,8 +46,11 @@
       const paymentDetails = () => {
         router.push({ name: "paymentDetails" });
       };
-  
-      return { eventDetails, user, paymentDetails };
+      // vehicleList
+      const vehicleList = () => {
+        router.push({ name: "vehicleList" });
+      };
+      return { vehicleList, eventDetails, user, paymentDetails };
     },
   };
   </script>

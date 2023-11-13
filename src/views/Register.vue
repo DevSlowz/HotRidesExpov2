@@ -10,10 +10,10 @@
       @submit.prevent="register"
       class="p-8 flex flex-col bg-light-grey rounded-md shadow-lg"
     >
-      <h1 class="text-3xl text-at-light-green mb-4">Register</h1>
+      <h1 class="text-3xl text-at-light-black mb-4">Register</h1>
 
       <div class="flex flex-col mb-2">
-        <label for="email" class="mb-1 text-sm text-at-light-green">Email</label>
+        <label for="email" class="mb-1 text-sm text-at-light-black">Email</label>
         <input
           type="text"
           required
@@ -24,7 +24,7 @@
       </div>
 
       <div class="flex flex-col mb-2">
-        <label for="password" class="mb-1 text-sm text-at-light-green">Password</label>
+        <label for="password" class="mb-1 text-sm text-at-light-black">Password</label>
         <input
           type="password"
           required
@@ -35,7 +35,7 @@
       </div>
 
       <div class="flex flex-col mb-2">
-        <label for="confirmPassword" class="mb-1 text-sm text-at-light-green"
+        <label for="confirmPassword" class="mb-1 text-sm text-at-light-black"
           >Confirm Password</label
         >
         <input
@@ -47,7 +47,7 @@
         />
       </div>
       <div class="flex flex-col mb-2">
-        <label for="userType" class="mb-1 text-sm text-at-light-green">Select User Type:</label>
+        <label for="userType" class="mb-1 text-sm text-at-light-black">Select User Type:</label>
         <select id="userType" required v-model="userType" class="p-2 border rounded-lg">
           <option value="Participant">Participant</option>
           <option value="Host">Host</option>
