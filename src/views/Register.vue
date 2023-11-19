@@ -90,27 +90,34 @@ export default {
 
     // Register function
     const register = async () => {
-      if (password.value === confirmPassword.value) {
-        try {
-          const { error } = await supabase.auth.signUp({
-            email: email.value,
-            password: password.value,
-          });
-          if (error) throw error;
-          router.push({ name: "Login" });
-        } catch (error) {
-          errorMsg.value = error.message;
-          setTimeout(() => {
-            errorMsg.value = null;
-          }, 5000);
-        }
-        return;
+  if (password.value === confirmPassword.value) {
+    try {
+      const { user, error } = await supabase.auth.signUp({
+        email: email.value,
+        password: password.value,
+      });
+      if (error) throw error;
+
+      // Insert the user into the Users table
+      const { data, error: insertError } = await supabase
+        .from('Users')
+        .insert([
+          { Email: email.value, UserRole: userType.value},
+        ]);
+
+      if (insertError) {
+        console.error('Error inserting user: ', insertError);
       }
-      errorMsg.value = "Error: Passwords do not match";
+
+      router.push({ name: "Login" });
+    } catch (error) {
+      errorMsg.value = error.message;
       setTimeout(() => {
         errorMsg.value = null;
       }, 5000);
-    };
+    }
+  }
+};
 
     return { email, password, confirmPassword, userType,errorMsg, register };
   },

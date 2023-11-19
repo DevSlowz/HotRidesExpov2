@@ -52,6 +52,19 @@ const router = createRouter({
       component: () => import('../views/VehicleList.vue')
     },
     {
+      path: '/payment',
+      name: 'Payment',
+      component: () => import('../views/PaymentView.vue'),
+      props: route => ({
+        firstName: route.params.firstName,
+        lastName: route.params.lastName,
+        tshirtSize: route.params.tshirtSize,
+        clubMembership: route.params.clubMembership,
+        selectedEvent: route.params.selectedEvent,
+        eventDate: route.params.eventDate
+      })
+    },
+    {
       path: '/user-type',
       name: 'userType',
       // route level code-splitting

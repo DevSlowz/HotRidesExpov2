@@ -3,7 +3,7 @@
       <div class="bg-white rounded-lg shadow-lg p-8 w-96">
         <img class="logo" src="/src/assets/images/logo.svg" alt="Logo" />
         <h1 class="text-2xl font-bold mb-4 text-center">Event Registration</h1>
-        <form>
+        <form @submit.prevent="submitForm">
           <div class="space-y-4">
             <div class="flex justify-center">
               <input v-model="firstName" type="text" placeholder="First Name" class="w-64 bg-gray-100 p-2 rounded" required>
@@ -35,7 +35,7 @@
                 <label for="event-date">Event Date:</label>
             </div>
             <div class="flex justify-center">
-              <Datepicker class="" v-model="date"> {{ date.slots }}</Datepicker>
+              <Datepicker format="dd MMMM yyyy" class="" v-model="eventDate"> {{ eventDate.value }}</Datepicker>
             </div>
             <div class="flex justify-center">
                 <label for="event-dropdown">Available Events:</label>
@@ -63,19 +63,37 @@
   
   <script setup>
   import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
   import Datepicker from '@vuepic/vue-datepicker';
   import '@vuepic/vue-datepicker/dist/main.css';
   
+  const router = useRouter();
   const firstName = ref('');
   const lastName = ref('');
   const tshirtSize = ref('small');
   const clubMembership = ref('basic');
   const selectedEvent = ref('event1');
+  const eventDate = ref('');
   
-  const submitRegistration = () => {
-    // Your registration logic here
-    // You can access all the form values as ref variables (e.g., firstName.value, lastName.value, etc.)
+  const submitForm = () => {
+  const params = {
+    firstName: firstName.value,
+    lastName: lastName.value,
+    tshirtSize: tshirtSize.value,
+    clubMembership: clubMembership.value,
+    selectedEvent: selectedEvent.value,
+    eventDate: eventDate.value
   };
+
+  console.log(params); // This will log the parameters to the console
+
+  router.push({
+    name: 'Payment',
+    params: params
+  });
+};
+
+  
   </script>
   
   <style>
