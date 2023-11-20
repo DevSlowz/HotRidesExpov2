@@ -62,6 +62,7 @@
   <!-- TODO: When a date is selected call database to view events and use v-for to loop through them and populate event section-->
   
   <script setup>
+  import store from "../stores/index";
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import Datepicker from '@vuepic/vue-datepicker';
@@ -84,8 +85,8 @@
     selectedEvent: selectedEvent.value,
     eventDate: eventDate.value
   };
-
-  console.log(params); // This will log the parameters to the console
+  store.methods.storeRegistration(params);
+  
 
   router.push({
     name: 'Payment',

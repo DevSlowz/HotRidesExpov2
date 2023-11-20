@@ -4,7 +4,7 @@
         <h1 class="text-2xl font-bold mb-4 text-center">Payment Details</h1>
         <div class="space-y-4">
           <div class="flex justify-center"> <!-- Center the button -->
-            <button @click="eventDetails" class="w-64 bg-red-500 hover:bg-red-800 text-white font-bold py-4 px-6 rounded"> <!-- Set a fixed width for all buttons -->
+            <button @click="paymentHistory" class="w-64 bg-red-500 hover:bg-red-800 text-white font-bold py-4 px-6 rounded"> <!-- Set a fixed width for all buttons -->
               Payment History
             </button>
           </div>
@@ -35,11 +35,11 @@
       const router = useRouter();
   
       // Logout function
-      const eventDetails = () => {
-        router.push({ name: "Home" });
+      const paymentHistory = () => {
+        router.push({ name: "paymentHistory" });
       };
   
-      return { eventDetails, user };
+      return { paymentHistory, user };
     },
   };
   </script>
