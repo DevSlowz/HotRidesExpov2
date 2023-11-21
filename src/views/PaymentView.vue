@@ -31,18 +31,104 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      firstName: "Matthew",
-      lastName: "Vieira",
-      tshirtSize: "small",
-      clubMembership: "basic",
-      selectedEvent: "event1",
-      eventDate: "2023-11-09T15:13:00.000Z",
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import store from "../stores/index";
+import { supabase } from "../lib/supabaseClient";
+
+let registrationInfo = store.state.registrations[0];
+
+// Load data from LocalStorage on component mount
+onMounted(() => {
+  const savedData = localStorage.getItem('registrationInfo');
+  if (savedData) {
+    registrationInfo = JSON.parse(savedData);
+  }
+  fetchUserData(); // Call fetchData on mounted
+  fetchEventData();
+});
+
+const fetchedUser = ref(null);
+const fetchedEvent = ref(null);
+const today = new Date();
+const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+// Save data to LocalStorage on component unmount
+onUnmounted(() => {
+  localStorage.setItem('registrationInfo', JSON.stringify(registrationInfo));
+});
+
+const firstName = ref(registrationInfo.firstName);
+const lastName = ref(registrationInfo.lastName);
+const tshirtSize = ref(registrationInfo.tshirtSize);
+const clubMembership = ref(registrationInfo.clubMembership);
+const selectedEvent = ref(registrationInfo.selectedEvent);
+const eventDate = ref(registrationInfo.eventDate);
+
+// Assuming 'userEmail' needs to be used as a filter value for a column 'Email' in the 'Events' table
+const userEmail = store.state["user"]["email"]; // Corrected to obtain email without JSON.stringify
+
+const fetchUserData = async () => {
+  let { data, error } = await supabase
+    .from('Users') // Corrected table name to 'Events'
+    .select('UserID') // You may specify here the exact columns you need
+    .eq('Email', userEmail); // Correct usage of eq() to compare 'Email' column with 'userEmail'
+  if (error) {
+    console.log('Error fetching events: ', error);
+  } else {
+    console.log('Fetched events: ', data[0].UserID)
+    fetchedUser.value = data[0].UserID // Logs the fetched events to the console
+    console.log(fetchedUser.value)
+  }
+};
+
+const fetchEventData = async () => {
+  let { data, error } = await supabase
+    .from('Event') // Correct the table name to 'Events' (plural)
+    .select('event_id') // Add the columns you want to retrieve
+    .eq('event_name', selectedEvent.value)
+  if (error) {
+    console.log('Error fetching events 2: ', error)
+  } else {
+    // console.log('Fetched events 2: ', data[0].event_id) // This line logs the fetched events to the console
+    // console.log(selectedEvent.value)
+    fetchedEvent.value = data[0].event_id
+  }
+};
+
+const purchase = async () => {
+  // Ensure that both fetchedUser and fetchedEvent have valid values
+  if (fetchedUser.value && fetchedEvent.value) {
+    const paymentData = {
+      payment_date: formattedDate,
+      payment_type: 'eventRegistration',
+      payment_method: 'Credit',
+      payment_amount: '100',
     };
-  },
+    // Insert the payment data into the 'Payment' table
+    const { data: paymentResult, error: paymentError } = await supabase.from('Payment').insert([paymentData]);
+    if (paymentError) {
+      console.error('Error inserting payment: ', paymentError);
+    } else if (paymentResult && paymentResult.length > 0) {
+      const paymentId = paymentResult[0].id; // Replace 'id' with your actual payment ID column name
+      // Prepare and insert the registration data
+      const registrationData = {
+        UserID: fetchedUser.value, // Replace 'UserID' with your actual User ID column name
+        EventID: fetchedEvent.value, // Replace 'EventID' with your actual Event ID column name
+        PaymentID: paymentId, // Replace 'PaymentID' with your actual Payment ID column name
+        registration_date: formattedDate
+      };
+      const { data: registrationResult, error: registrationError } = await supabase.from('Registration').insert([registrationData]);
+      if (registrationError) {
+        console.error('Error inserting registration: ', registrationError);
+      } else {
+        console.log('Registration successful', registrationResult);
+        // Handle successful registration here, such as redirecting to a confirmation page
+      }
+    }
+  } else {
+    console.error('User or Event data is not available for registration.');
+  }
 };
 </script>
 
@@ -58,58 +144,3 @@ export default {
 
 /* Add any additional styling as needed */
 </style>
-
-  
-  <script setup>
-  import { ref, onMounted, onUnmounted } from 'vue';
-  import store from "../stores/index";
-  import { supabase } from "../lib/supabaseClient";
-  
-  let registrationInfo = store.state.registrations[0];
-  
-  // Load data from LocalStorage on component mount
-  onMounted(() => {
-    const savedData = localStorage.getItem('registrationInfo');
-    if (savedData) {
-      registrationInfo = JSON.parse(savedData);
-    }
-  });
-  
-  // Save data to LocalStorage on component unmount
-  onUnmounted(() => {
-    localStorage.setItem('registrationInfo', JSON.stringify(registrationInfo));
-  });
-  
-  const firstName = ref(registrationInfo.firstName);
-  const lastName = ref(registrationInfo.lastName);
-  const tshirtSize = ref(registrationInfo.tshirtSize);
-  const clubMembership = ref(registrationInfo.clubMembership);
-  const selectedEvent = ref(registrationInfo.selectedEvent);
-  const eventDate = ref(registrationInfo.eventDate);
-  
-  console.log('Print out test : ' + JSON.stringify(store.state["user"]["email"]));
-  const userEmail = JSON.stringify(store.state["user"]["email"])
-
-  const fetchData = async () => {
-    let { data, error } = await supabase
-    .from('Users') // Correct the table name to 'Events' (plural)
-    .select('Email') // Add the columns you want to retrieve
-    .eq(userEmail)
-  if (error) {
-    console.log('Error fetching events: ', error)
-  } else {
-    console.log('Fetched events: ', data) // This line logs the fetched events to the console
-  }
-  console.log("Fetch Data" + fetchData)
-
-  };
-
-  const purchase = async () => {
-  
-};
-
-  </script>
-  
-  <style>
-  /* Add your styles here */
-  </style>
