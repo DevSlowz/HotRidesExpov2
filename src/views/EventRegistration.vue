@@ -37,17 +37,19 @@
           <div class="flex justify-center">
             <Datepicker format="dd MMMM yyyy" class="" v-model="eventDate"> {{ eventDate.value }}</Datepicker>
           </div>
-          <div class="flex justify-center">
-              <label for="event-dropdown">Available Events:</label>
-          </div>
-          <div class="flex justify-center">
-            <select v-model="selectedEvent" id="event-dropdown" class="w-64 bg-gray-100 p-2 rounded">
-              <option value="event1">Event 1</option>
-              <option value="event2">Event 2</option>
-              <option value="event3">Event 3</option>
-              <!-- Add more events as needed -->
-            </select>
-          </div>
+          <div class="flex justify-center" v-if="eventData && eventData.length > 0">
+        <label for="event-dropdown">Available Events:</label>
+      </div>
+      <div class="flex justify-center" v-if="eventData && eventData.length > 0">
+        <select v-model="selectedEvent" id="event-dropdown" class="w-64 bg-gray-100 p-2 rounded">
+          <option v-for="event in eventData" :key="event.event_name" :value="event.event_name">
+            {{ event.event_name }}
+          </option>
+        </select>
+      </div>
+      <div class="flex justify-center" v-if="!eventData || eventData.length === 0">
+        No events available.
+      </div>
           <div class="flex justify-center">
             <button type="submit" class="w-64 bg-red-500 hover-bg-red-800 text-white font-bold py-4 px-6 rounded">
               Pay
@@ -110,6 +112,15 @@ const fetchData = async () => {
     console.log('Fetched events: ', data) // This line logs the fetched events to the console
     eventData.value = data
   }
+    let eventNames = [];
+    if (data[0]) {
+        for (let key in data[0]) {
+          if (key.startsWith('event_name')) {
+            eventNames.push(data[0][key]);
+          }
+        }
+    }
+    console.log('Fetched events: ', data)
 }
 
 // Watch for changes in eventDate and fetch data accordingly

@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="mt-8">
-        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+        <button @click="purchase" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
           Purchase
         </button>
       </div>
@@ -63,6 +63,7 @@ export default {
   <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
   import store from "../stores/index";
+  import { supabase } from "../lib/supabaseClient";
   
   let registrationInfo = store.state.registrations[0];
   
@@ -86,7 +87,27 @@ export default {
   const selectedEvent = ref(registrationInfo.selectedEvent);
   const eventDate = ref(registrationInfo.eventDate);
   
-  console.log('Print out test : ' + JSON.stringify(registrationInfo));
+  console.log('Print out test : ' + JSON.stringify(store.state["user"]["email"]));
+  const userEmail = JSON.stringify(store.state["user"]["email"])
+
+  const fetchData = async () => {
+    let { data, error } = await supabase
+    .from('Users') // Correct the table name to 'Events' (plural)
+    .select('Email') // Add the columns you want to retrieve
+    .eq(userEmail)
+  if (error) {
+    console.log('Error fetching events: ', error)
+  } else {
+    console.log('Fetched events: ', data) // This line logs the fetched events to the console
+  }
+  console.log("Fetch Data" + fetchData)
+
+  };
+
+  const purchase = async () => {
+  
+};
+
   </script>
   
   <style>

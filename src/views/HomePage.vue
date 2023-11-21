@@ -53,6 +53,8 @@
       return { vehicleList, eventDetails, user, paymentDetails };
     },
   };
+
+
   </script>
   
   <style>
