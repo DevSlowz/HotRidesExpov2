@@ -97,7 +97,6 @@ const fetchEventData = async () => {
 };
 
 const purchase = async () => {
-  // Ensure that both fetchedUser and fetchedEvent have valid values
   if (fetchedUser.value && fetchedEvent.value) {
     const paymentData = {
       payment_date: formattedDate,
@@ -105,26 +104,33 @@ const purchase = async () => {
       payment_method: 'Credit',
       payment_amount: '100',
     };
-    // Insert the payment data into the 'Payment' table
-    const { data: paymentResult, error: paymentError } = await supabase.from('Payment').insert([paymentData]);
+    const { data: paymentResult, error: paymentError } = await supabase.from('Payment').insert([paymentData]).select();
     if (paymentError) {
       console.error('Error inserting payment: ', paymentError);
-    } else if (paymentResult && paymentResult.length > 0) {
-      const paymentId = paymentResult[0].id; // Replace 'id' with your actual payment ID column name
-      // Prepare and insert the registration data
-      const registrationData = {
-        UserID: fetchedUser.value, // Replace 'UserID' with your actual User ID column name
-        EventID: fetchedEvent.value, // Replace 'EventID' with your actual Event ID column name
-        PaymentID: paymentId, // Replace 'PaymentID' with your actual Payment ID column name
-        registration_date: formattedDate
-      };
-      const { data: registrationResult, error: registrationError } = await supabase.from('Registration').insert([registrationData]);
-      if (registrationError) {
-        console.error('Error inserting registration: ', registrationError);
-      } else {
-        console.log('Registration successful', registrationResult);
-        // Handle successful registration here, such as redirecting to a confirmation page
-      }
+      return;  // Stop the function if there is an error
+    }
+    console.log("Test 1")
+    const paymentId = paymentResult[0].payment_id;  // Ensure this is the correct field containing the payment ID
+    console.log("Test 1.1 : ", paymentResult[0].payment_id)
+    if (!paymentId) {
+      console.error('Payment ID was not returned by Supabase:', paymentResult);
+      return;  // Stop the function if no payment ID is returned
+    }
+    console.log("Test 2")
+    const registrationData = {
+      UserID: fetchedUser.value, // Ensure these fields match your actual column names
+      event_id: fetchedEvent.value,
+      payment_id: paymentId,
+      registration_date: formattedDate
+    };
+    console.log("Test 3")
+    const { data: registrationResult, error: registrationError } = await supabase.from('Registration').insert([registrationData]).select();
+    if (registrationError) {
+      console.error('Error inserting registration:', registrationError);
+    } else if (registrationResult) {
+      console.log('Registration successful', registrationResult);
+    } else {
+      console.error('Registration did not return a result or error. This is unexpected behavior.', registrationResult);
     }
   } else {
     console.error('User or Event data is not available for registration.');
