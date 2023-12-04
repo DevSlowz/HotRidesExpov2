@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import Home from '/src/App.vue';
-import LoginView from '../views/Login.vue';
-import Register from '../views/Register.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import Home from '/src/App.vue'
+import LoginView from '../views/Login.vue'
+import Register from '../views/Register.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,20 +52,20 @@ const router = createRouter({
       component: () => import('../views/VehicleList.vue')
     },
     {
-    path: '/payment-history',
-    name: 'paymentHistory',
-    component: () => import('../views/PaymentDetails/PaymentHistory.vue'),
+      path: '/payment-history',
+      name: 'paymentHistory',
+      component: () => import('../views/PaymentDetails/PaymentHistory.vue')
     },
     {
-    path: '/payment-methods',
-    name: 'paymentMethods',
-    component: () => import('../views/PaymentDetails/PaymentMethod.vue'),
+      path: '/payment-methods',
+      name: 'paymentMethods',
+      component: () => import('../views/PaymentDetails/PaymentMethod.vue')
     },
     {
       path: '/payment',
       name: 'Payment',
       component: () => import('../views/PaymentView.vue'),
-      props: route => ({
+      props: (route) => ({
         firstName: route.params.firstName,
         lastName: route.params.lastName,
         tshirtSize: route.params.tshirtSize,
@@ -73,6 +73,16 @@ const router = createRouter({
         selectedEvent: route.params.selectedEvent,
         eventDate: route.params.eventDate
       })
+    },
+    {
+      path: '/host-dashboard',
+      name: 'HostDashboard',
+      component: () => import('../views/Host/HostDashboard.vue')
+    },
+    {
+      path: '/host-event',
+      name: 'EventCreate',
+      component: () => import('../views/Host/HostEvent.vue')
     },
     {
       path: '/user-type',
