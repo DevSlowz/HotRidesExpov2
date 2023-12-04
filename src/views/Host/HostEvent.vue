@@ -40,47 +40,56 @@
 </template>
 
 <script>
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { supabase } from '../../lib/supabaseClient';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { supabase } from '../../lib/supabaseClient';
+import store from "./../../stores/index";
+export default {
+  setup() {
+	const router = useRouter();
+	const eventForm = ref({
+	  // ...event form fields
+	});
+	// Define fetchUser before you call it.
+	const fetchUser = async () => {
+	  try {
+		// Your fetchUser logic here
+		const user = await store.methods.setRealUser(store.state.user.email);
+		return user;
+	  } catch (error) {
+		console.error("An error occurred while fetching the user ID:", error);
+	  }
+	};
+	// Initialization of user should be awaited within a lifecycle hook if inside setup()
+	const user = ref(null);
 
-  export default {
-	setup() {
-	  const router = useRouter();
-	  const eventForm = ref({
-		event_name: '',
-		event_date: '',
-		event_location: '',
-		event_start_time: '',
-		event_end_time: '',
-		event_desc: '',
-	  });
+	const submitEvent = async () => {
+	  // Make sure to await fetchUser() and get the user id
+	  if (!user.value) {
+		user.value = await fetchUser();
+	  }
 
-		const submitEvent = async () => {
-		  const { data, error } = await supabase
-			.from('Event')
-			.insert([{
-			  event_name: eventForm.value.event_name,
-			  event_date: eventForm.value.event_date,
-			  event_location: eventForm.value.event_location,
-			  event_start_time: eventForm.value.event_start_time,
-			  event_end_time: eventForm.value.event_end_time,
-			  event_desc: eventForm.value.event_desc,
-			}]);
+	  if (user.value) {
+		const { data, error } = await supabase
+		  .from('Event')
+		  .insert([{
+				event_name: eventForm.value.event_name,
+				event_date: eventForm.value.event_date,
+				event_location: eventForm.value.event_location,
+				event_start_time: eventForm.value.event_start_time,
+				event_end_time: eventForm.value.event_end_time,
+				event_desc: eventForm.value.event_desc,
+				event_host: user.value.UserID // Assign the userID as the event_host
+		  }]);
 
-		  if (error) {
-			alert(`Error: ${error.message}`);
-			  console.log(data);
-		  } else {
-			alert('Event created successfully!');
-			router.push({ name: 'Dashboard' }); // Replace 'Dashboard' with the actual route name you want to navigate to
-		  }
-		};
-
-
-	  return { eventForm, submitEvent };
-	},
-  };
+		// ...handle the response
+	  }
+	};
+	// Now you can call fetchUser and submitEvent in the correct order.
+	// ...rest of the setup logic
+	return { eventForm, submitEvent };
+  }
+};
 </script>
 
 

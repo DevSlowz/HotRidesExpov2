@@ -37,11 +37,11 @@ export default {
     };
 
     const viewEventDetails = () => {
-      router.push({ name: 'EventList' }); // name of your event list route
+      router.push({ name: 'HostEventDetails' }); // name of your event list route
     };
 
     const viewFinancials = () => {
-      router.push({ name: 'Financials' }); // name of your financials route
+      router.push({ name: 'EventFinance' }); // name of your financials route
     };
 
     return {
