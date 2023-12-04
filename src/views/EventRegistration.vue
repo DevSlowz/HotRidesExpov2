@@ -106,6 +106,7 @@ const fetchData = async () => {
     .from('Event') // Correct the table name to 'Events' (plural)
     .select('event_name, event_date') // Add the columns you want to retrieve
     .eq('event_date', eventDateFormatted)
+    console.log('Test 1 Fetched events: ', data)
   if (error) {
     console.log('Error fetching events: ', error)
   } else {

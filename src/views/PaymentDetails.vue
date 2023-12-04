@@ -9,7 +9,7 @@
             </button>
           </div>
           <div class="flex justify-center"> <!-- Center the button -->
-            <button class="w-64 bg-red-500 hover:bg-red-800 text-white font-bold py-4 px-6 rounded"> <!-- Set a fixed width for all buttons -->
+            <button @click="paymentMethod" class="w-64 bg-red-500 hover:bg-red-800 text-white font-bold py-4 px-6 rounded"> <!-- Set a fixed width for all buttons -->
                 Payment Methods
             </button>
           </div>
@@ -33,13 +33,16 @@
   
       // Setup ref to router
       const router = useRouter();
-  
+      
       // Logout function
       const paymentHistory = () => {
         router.push({ name: "paymentHistory" });
       };
+      const paymentMethod = () => {
+        router.push({ name: "paymentMethods" });
+      };
   
-      return { paymentHistory, user };
+      return { paymentHistory, paymentMethod, user };
     },
   };
   </script>

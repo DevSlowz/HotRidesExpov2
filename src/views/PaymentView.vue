@@ -1,9 +1,13 @@
 <template>
   <div class="container mx-auto p-8">
-    <div class="bg-white p-8 rounded shadow-md">
-      <h2 class="text-2xl font-bold mb-4">Receipt</h2>
-      <div class="grid grid-cols-2 gap-4">
-        <div class="receipt-item">
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-bold mb-6 text-center">Complete Your Purchase</h2>
+      
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold mb-4">Receipt Summary</h3>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <!-- Existing receipt items here -->
+          <div class="receipt-item">
           <span class="font-bold">First Name:</span> {{ firstName }}
         </div>
         <div class="receipt-item">
@@ -22,14 +26,52 @@
           <span class="font-bold">Event Date:</span> {{ eventDate }}
         </div>
       </div>
-      <div class="mt-8">
-        <button @click="purchase" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
-          Purchase
+      </div>
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold mb-4">Payment Details</h3>
+        <form id="payment-form">
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Card Number</span>
+              </label>
+              <input type="text" placeholder="1234 5678 9012 3456" class="input input-bordered" />
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Cardholder Name</span>
+              </label>
+              <input type="text" placeholder="Name on the card" class="input input-bordered" />
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Expiry Date</span>
+              </label>
+              <input type="text" placeholder="MM/YY" class="input input-bordered" />
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">CVV</span>
+              </label>
+              <input type="text" placeholder="CVV" class="input input-bordered" />
+            </div>
+          </div>
+          
+          <button type="button" @click="purchase" class="btn bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 w-full">
+            Pay with Credit Card
+          </button>
+        </form>
+      </div>
+      <div class="flex justify-center items-center mt-8">
+        <span class="text-gray-500 mr-3">Or pay with</span>
+        <button @click="redirectToPaypal" class="btn bg-yellow-500 text-white px-6 py-2 rounded-md hover:bg-yellow-600">
+          PayPal
         </button>
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
@@ -136,17 +178,36 @@ const purchase = async () => {
     console.error('User or Event data is not available for registration.');
   }
 };
+
+const redirectToPaypal = () => {
+  // Implement the actual redirection to PayPal here
+  console.log('Redirect to PayPal initiated.');
+}
 </script>
 
 <style scoped>
-.receipt {
-  /* Add any additional styling for the receipt container if needed */
+/* Add or update style as needed, keeping existing styles */
+.btn {
+  transition: background-color 150ms ease;
 }
-
-.receipt-item {
-  border-bottom: 1px solid #ccc;
-  padding: 2px 0;
+.form-control {
+  display: flex;
+  flex-direction: column;
 }
-
-/* Add any additional styling as needed */
+.label {
+  margin-bottom: 0.5rem;
+}
+.input {
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #d1d5db;
+}
+.input::placeholder {
+  color: #9ca3af;
+}
+.input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
 </style>
