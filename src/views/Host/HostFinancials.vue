@@ -42,6 +42,24 @@
         <p class="event-detail">Past Events: {{ pastEvents }}</p>
         <p class="event-detail">Average Attendance: {{ averageAttendance }}</p>
       </div>
+		<!-- Charity Donations Overview -->
+		<div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+		  <h2 class="text-2xl font-semibold">Charity Donations Overview</h2>
+		  <ul class="list-disc pl-6 mt-4">
+			<li v-for="(charity, index) in charityDonations" :key="index">
+			  {{ charity.name }}: {{ charity.amount }}
+			</li>
+		  </ul>
+		</div>
+		<!-- Sponsors Overview -->
+		<div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+		  <h2 class="text-2xl font-semibold">Sponsors Overview</h2>
+		  <ul class="list-disc pl-6 mt-4">
+			<li v-for="(sponsor, index) in sponsors" :key="index">
+			  {{ sponsor.name }}: {{ sponsor.contribution }}
+			</li>
+		  </ul>
+		</div>
     </div>
   </div>
 </template>
@@ -63,6 +81,16 @@ export default {
       { month: 'Mar', amount: 3500 },
       // ...more months
     ];
+		const charityDonations = ref([
+		  { name: 'Charity A', amount: 1000 },
+		  { name: 'Charity B', amount: 1500 },
+		  // You can add more charities here
+		]);
+		const sponsors = ref([
+		  { name: 'Sponsor X', contribution: 5000 },
+		  { name: 'Sponsor Y', contribution: 7500 },
+		  // You can add more sponsors here
+		]);
 
     const registrationsData = [
       { month: 'Jan', count: 25 },
@@ -162,6 +190,8 @@ export default {
       upcomingEvents: eventReportData.upcomingEvents,
       pastEvents: eventReportData.pastEvents,
       averageAttendance: eventReportData.averageAttendance,
+		   charityDonations,
+			sponsors,
     };
   },
 };

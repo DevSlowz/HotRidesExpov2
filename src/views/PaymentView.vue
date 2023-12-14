@@ -13,12 +13,18 @@
         <div class="receipt-item">
           <span class="font-bold">Last Name:</span> {{ lastName }}
         </div>
+			<div class="receipt-item">
+			  <span class="font-bold">Price:</span> {{ eventPrice }}
+			</div>
         <div class="receipt-item">
           <span class="font-bold">T-Shirt Size:</span> {{ tshirtSize }}
         </div>
         <div class="receipt-item">
           <span class="font-bold">Club Membership:</span> {{ clubMembership }}
         </div>
+			<div class="receipt-item">
+			  <span class="font-bold">Vehicle:</span> {{ selectedVehicle }}
+			</div>
         <div class="receipt-item">
           <span class="font-bold">Selected Event:</span> {{ selectedEvent }}
         </div>
@@ -64,12 +70,25 @@
       </div>
       <div class="flex justify-center items-center mt-8">
         <span class="text-gray-500 mr-3">Or pay with</span>
-        <button @click="redirectToPaypal" class="btn bg-yellow-500 text-white px-6 py-2 rounded-md hover:bg-yellow-600">
+        <button @click="redirectToPaypal" class="btn bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-yellow-600">
           PayPal
         </button>
+		  
       </div>
+		<div class="receipt" ref="receiptSection">
+		  <!-- Receipt content goes here... -->
+		  <!-- For example, it can encompass the .bg-white div which includes receipt items -->
+		</div>
+		<div class="flex justify-center items-center mt-8">
+		  <!-- ... existing buttons ... -->
+		  <button class="btn bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600" @click="printReceipt">
+			Print Receipt
+		  </button>
+		</div>
     </div>
+	  
   </div>
+	
 </template>
 
 
@@ -79,6 +98,7 @@ import store from "../stores/index";
 import { supabase } from "../lib/supabaseClient";
 
 let registrationInfo = store.state.registrations[0];
+	
 
 // Load data from LocalStorage on component mount
 onMounted(() => {
@@ -94,6 +114,7 @@ const fetchedUser = ref(null);
 const fetchedEvent = ref(null);
 const today = new Date();
 const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+const eventPrice = ref(0);
 
 // Save data to LocalStorage on component unmount
 onUnmounted(() => {
@@ -106,10 +127,23 @@ const tshirtSize = ref(registrationInfo.tshirtSize);
 const clubMembership = ref(registrationInfo.clubMembership);
 const selectedEvent = ref(registrationInfo.selectedEvent);
 const eventDate = ref(registrationInfo.eventDate);
+const selectedVehicle = ref(registrationInfo.selectedVehicle);
 
 // Assuming 'userEmail' needs to be used as a filter value for a column 'Email' in the 'Events' table
 const userEmail = store.state["user"]["email"]; // Corrected to obtain email without JSON.stringify
-
+	const receiptSection = ref(null);
+	const printReceipt = () => {
+	  if (receiptSection.value) {
+		const printContent = receiptSection.value.innerHTML;
+		const WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+		WinPrint.document.write(printContent);
+		WinPrint.document.close();
+		WinPrint.focus();
+		WinPrint.print();
+		WinPrint.close();
+		alert('Receipt printed successfully!');
+	  }
+	};
 const fetchUserData = async () => {
   let { data, error } = await supabase
     .from('Users') // Corrected table name to 'Events'
@@ -124,28 +158,27 @@ const fetchUserData = async () => {
   }
 };
 
-const fetchEventData = async () => {
-  let { data, error } = await supabase
-    .from('Event') // Correct the table name to 'Events' (plural)
-    .select('event_id') // Add the columns you want to retrieve
-    .eq('event_name', selectedEvent.value)
-  if (error) {
-    console.log('Error fetching events 2: ', error)
-  } else {
-    // console.log('Fetched events 2: ', data[0].event_id) // This line logs the fetched events to the console
-    // console.log(selectedEvent.value)
-    fetchedEvent.value = data[0].event_id
-  }
-};
+	const fetchEventData = async () => {
+	  let { data, error } = await supabase
+		.from('Event') // Corrected table name
+		.select('event_id, event_price') // Fetch event_price along with event_id
+		.eq('event_name', selectedEvent.value)
+	  if (error) {
+		console.log('Error fetching event data: ', error);
+	  } else {
+		fetchedEvent.value = data[0].event_id;
+		eventPrice.value = data[0].event_price; // Store the fetched event price
+	  }
+	};
 
-const purchase = async () => {
-  if (fetchedUser.value && fetchedEvent.value) {
-    const paymentData = {
-      payment_date: formattedDate,
-      payment_type: 'eventRegistration',
-      payment_method: 'Credit',
-      payment_amount: '100',
-    };
+	const purchase = async () => {
+	  if (fetchedUser.value && fetchedEvent.value) {
+		const paymentData = {
+		  payment_date: formattedDate,
+		  payment_type: 'eventRegistration',
+		  payment_method: 'Credit',
+		  payment_amount: eventPrice.value, // Use the fetched event price
+		};
     const { data: paymentResult, error: paymentError } = await supabase.from('Payment').insert([paymentData]).select();
     if (paymentError) {
       console.error('Error inserting payment: ', paymentError);

@@ -31,6 +31,16 @@
               <option value="vip">VIP</option>
             </select>
           </div>
+			<div class="flex justify-center" v-if="userVehicles && userVehicles.length > 0">
+				<label for="vehicle-dropdown">Select Vehicle:</label>
+			  </div>
+			  <div class="flex justify-center" v-if="userVehicles && userVehicles.length > 0">
+				<select v-model="selectedVehicle" id="vehicle-dropdown" class="w-64 bg-gray-100 p-2 rounded">
+				  <option v-for="vehicle in userVehicles" :key="vehicle.vechicle_id" :value="vehicle">
+					{{ vehicle.vechicle_make }} {{ vehicle.vechicle_model }} - {{ vehicle.license_plate }}
+				  </option>
+				</select>
+			  </div>
           <div class="flex justify-center">
               <label for="event-date">Event Date:</label>
           </div>
@@ -65,12 +75,14 @@
 
 <script setup>
 import store from "../stores/index";
-import { ref, watchEffect } from 'vue';
+import { ref, watch, onMounted} from 'vue';
 import { useRouter } from 'vue-router';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { supabase } from "../lib/supabaseClient";
 
+const userVehicles = ref([]);
+const selectedVehicle = ref(null);
 const router = useRouter();
 const firstName = ref('');
 const lastName = ref('');
@@ -79,7 +91,7 @@ const clubMembership = ref('basic');
 const selectedEvent = ref('event1');
 const eventDate = ref('');
 const eventData = ref(null);
-
+const fetchedUser = ref(null);
 const submitForm = () => {
 const params = {
   firstName: firstName.value,
@@ -87,7 +99,8 @@ const params = {
   tshirtSize: tshirtSize.value,
   clubMembership: clubMembership.value,
   selectedEvent: selectedEvent.value,
-  eventDate: eventDate.value
+  eventDate: eventDate.value,
+  selectedVehicle: (selectedVehicle.value.vechicle_make + ' ' + selectedVehicle.value.vechicle_model + ' - ' + selectedVehicle.value.license_plate),
 };
 store.methods.storeRegistration(params);
 
@@ -97,6 +110,19 @@ router.push({
   params: params
 });
 };
+
+	const fetchUserVehicles = async () => {
+	  if (!fetchedUser.value) return;
+	  const { data, error } = await supabase
+		.from('Vehicle')
+		.select('*')
+		.eq('user_id', fetchedUser.value.UserID);
+	  if (error) {
+		console.error('Error fetching vehicles for user:', error);
+	  } else {
+		userVehicles.value = data;
+	  }
+	};
 
 const fetchData = async () => {
   if (!eventDate.value) return; // Don't fetch data if eventDate is not set
@@ -125,10 +151,17 @@ const fetchData = async () => {
 }
 
 // Watch for changes in eventDate and fetch data accordingly
-watchEffect(() => {
-  fetchData();
-});
-
+	onMounted(async () => {
+	  if(store.state.user && store.state.user.email) {
+		fetchedUser.value = await store.methods.setRealUser(store.state.user.email);
+		fetchUserVehicles();
+	  }
+	});
+	watch(eventDate, (newValue, oldValue) => {
+	  if (newValue !== oldValue) {
+		fetchData();
+	  }
+	});
 </script>
 
 <style>

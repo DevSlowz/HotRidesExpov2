@@ -95,6 +95,21 @@ const router = createRouter({
       component: () => import('../views/Host/HostFinancials.vue')
     },
     {
+      path: '/sponsor-dashboard',
+      name: 'SponsorDashboard',
+      component: () => import('../views/Sponsor/SponsorDashboard.vue')
+    },
+    {
+      path: '/donate',
+      name: 'Donate',
+      component: () => import('../views/Donate/donation.vue')
+    },
+    {
+      path: '/admin',
+      name: 'Admin',
+      component: () => import('../views/Admin/AdminDashboard.vue')
+    },
+    {
       path: '/user-type',
       name: 'userType',
       // route level code-splitting
